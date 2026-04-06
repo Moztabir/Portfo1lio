@@ -1,0 +1,311 @@
+
+
+
+<!-- ========================= index.html ========================= -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moztabir Islam — Web Developer & Photographer</title>
+  <meta name="description" content="Interactive portfolio for Moztabir Islam, a web developer and photographer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <div class="loader-kicker mono">Initializing portfolio</div>
+      <div class="loader-title">
+        <span>MOZTABIR</span>
+        <span>ISLAM</span>
+      </div>
+      <div class="loader-bar-wrap">
+        <div class="loader-bar" id="loaderBar"></div>
+      </div>
+      <div class="loader-meta">
+        <span>three.js scene</span>
+        <span id="loaderPercent">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="three-bg" aria-hidden="true"></div>
+  <div class="noise"></div>
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <div class="scroll-progress"></div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="#home" class="brand magnetic mono">
+        <span class="brand-dot"></span>
+        <span>Moztabir Islam</span>
+      </a>
+
+      <nav class="nav-links mono">
+        <a class="magnetic" href="#about">About</a>
+        <a class="magnetic" href="#work">Work</a>
+        <a class="magnetic" href="#photo">Photo</a>
+        <a class="magnetic" href="#skills">Skills</a>
+        <a class="magnetic" href="#contact">Contact</a>
+      </nav>
+
+      <a href="#contact" class="nav-cta magnetic mono">Let’s Talk</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <div class="hero-topline mono">
+            <span class="hero-chip magnetic">Web Developer</span>
+            <span class="hero-chip magnetic">Photographer</span>
+            <span class="hero-chip magnetic">Interactive UI</span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="title-line title-outline" data-depth="0.06">BUILDING</span>
+            <span class="title-line" data-depth="0.12">DIGITAL</span>
+            <span class="title-line title-accent" data-depth="0.18">EXPERIENCES</span>
+            <span class="title-line title-outline" data-depth="0.08">THAT MOVE</span>
+          </h1>
+
+          <p class="hero-text reveal-delay">
+            I create interactive websites, polished front-end experiences, and visual work that blends code, motion, and photography into something memorable.
+          </p>
+
+          <div class="hero-actions reveal-delay-2">
+            <a href="#work" class="btn btn-primary magnetic">View Projects</a>
+            <a href="#photo" class="btn btn-secondary magnetic">Photography</a>
+          </div>
+        </div>
+
+        <div class="hero-side reveal">
+          <div class="hero-panel magnetic floating-panel">
+            <div class="panel-grid"></div>
+            <div class="panel-glow"></div>
+            <div class="panel-content">
+              <div class="eyebrow mono">Landing Page Preview</div>
+              <div class="big-stat">Frontend + Visual Storytelling</div>
+              <p>
+                Strong motion, clean systems, modern layouts, and an extra photography layer so the portfolio shows both technical and creative work.
+              </p>
+              <div class="panel-tags mono">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JS</span>
+                <span>React</span>
+                <span>Tailwind</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-marquee mono">
+        <div class="marquee-track">
+          <span>Creative Frontend</span>
+          <span>Scroll Animation</span>
+          <span>Photography</span>
+          <span>Interactive UI</span>
+          <span>Creative Frontend</span>
+          <span>Scroll Animation</span>
+          <span>Photography</span>
+          <span>Interactive UI</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container section-head reveal">
+        <div>
+          <div class="eyebrow mono">About</div>
+          <h2>Developer mindset with a visual eye.</h2>
+        </div>
+        <p>
+          I like building websites that feel premium and alive. My work sits between clean front-end development, motion design, and photography-driven presentation.
+        </p>
+      </div>
+
+      <div class="container about-grid">
+        <article class="card reveal magnetic">
+          <h3>What I do</h3>
+          <p>
+            I build portfolio sites, landing pages, UI concepts, and interactive projects with strong typography, smooth motion, and clear visual systems.
+          </p>
+        </article>
+
+        <article class="card reveal magnetic">
+          <h3>What I bring</h3>
+          <p>
+            A mix of technical development and visual direction. I care about how a site feels, not just how it functions.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="work">
+      <div class="container section-head reveal">
+        <div>
+          <div class="eyebrow mono">Selected Work</div>
+          <h2>Featured projects.</h2>
+        </div>
+        <p>
+          Sticky cards keep each project focused while the page still feels cinematic as you scroll.
+        </p>
+      </div>
+
+      <div class="container projects-stack">
+        <article class="project-card project-card-full reveal tilt-card">
+            <div class="project-meta">
+                <div class="project-kicker mono">Case Study 01</div>
+                <h3>Chown Town</h3>
+                <p>Indoor navigation experience focused on room search, pathfinding clarity, and campus wayfinding.</p>
+
+                <div class="tag-row mono">
+                <span>Leaflet</span>
+                <span>Routing</span>
+                <span>UX</span>
+                </div>
+
+                <div class="project-image-full">
+                <img src="/assets/img/projects/ct_logo.png" alt="Chown Town Preview">
+                </div>
+
+                <a href="P1.html" class="project-link magnetic">View Project</a>
+            </div>
+            </article>
+
+        <article class="project-card project-card-full reveal tilt-card">
+            <div class="project-meta">
+                <div class="project-kicker mono">Case Study 01</div>
+                <h3>Mathive</h3>
+                <p>Educational mini-game platform designed to feel fast, playful, and easy for students to explore.</p>
+
+                <div class="tag-row mono">
+                <span>Games</span>
+                <span>UI</span>
+                <span>Front-End</span>
+                <span>Backend</span>
+                </div>
+
+                <div class="project-image-full">
+                <img src="/assets/img/projects/mathive_logo.png" alt="Chown Town Preview">
+                </div>
+
+                <a href="P1.html" class="project-link magnetic">View Project</a>
+            </div>
+            </article>
+      </div>
+    </section>
+
+    <section class="section photo-section" id="photo">
+      <div class="container section-head reveal">
+        <div>
+          <div class="eyebrow mono">Photography</div>
+          <h2>Frames, light, and composition.</h2>
+        </div>
+        <p>
+          This section gives your portfolio a creative edge. Replace these placeholders with your real portrait, landscape, or street photography shots.
+        </p>
+      </div>
+
+      <div class="container photo-grid">
+        <a href="portrait.html" class="photo-link">
+        <article class="photo-card reveal magnetic tall">
+            <img src="assets/img/photos/P1.jpeg" class="photo-img" alt="Portrait work">
+
+            <div class="photo-caption">
+            <span class="mono">Portrait</span>
+            <h3>Portrait Work</h3>
+            </div>
+        </article>
+        </a>
+
+        <a href="landscape.html" class="photo-link">
+        <article class="photo-card reveal magnetic">
+            <img src="assets/img/photos/l4.jpg" class="photo-img" alt="Landscape">
+
+            <div class="photo-caption">
+            <span class="mono">Landscape</span>
+            <h3>Landscape Frames</h3>
+            </div>
+        </article>
+        </a>
+</div>
+
+      <div class="container skills-grid">
+        <article class="skill-box reveal magnetic">
+          <h3>Frontend</h3>
+          <div class="skill-tags mono">
+            <span>HTML</span>
+            <span>CSS</span>
+            <span>JavaScript</span>
+            <span>React</span>
+            <span>Tailwind CSS</span>
+            <span>Bootstrap</span>
+          </div>
+        </article>
+
+        <article class="skill-box reveal magnetic">
+          <h3>Creative / UI</h3>
+          <div class="skill-tags mono">
+            <span>Figma</span>
+            <span>Responsive Design</span>
+            <span>UI Systems</span>
+            <span>Motion Design</span>
+            <span>Three.js</span>
+          </div>
+        </article>
+
+        <article class="skill-box reveal magnetic">
+          <h3>Other</h3>
+          <div class="skill-tags mono">
+            <span>GitHub</span>
+            <span>VS Code</span>
+            <span>Supabase</span>
+            <span>Python</span>
+            <span>Problem Solving</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container section-head reveal">
+        <div>
+          <div class="eyebrow mono">Contact</div>
+          <h2>Let’s build something memorable.</h2>
+        </div>
+        <p>
+          Replace these links with your real email, GitHub, LinkedIn, and resume.
+        </p>
+      </div>
+
+      <div class="container contact-grid">
+        <a href="mailto:hello@example.com" class="contact-card reveal magnetic">
+          <span class="mono">Email</span>
+          <strong>moztabir@gmail.com</strong>
+        </a>
+        <a href="#" class="contact-card reveal magnetic">
+          <span class="mono">GitHub</span>
+          <strong>github.com/Moztabir</strong>
+        </a>
+        <a href="#" class="contact-card reveal magnetic">
+          <span class="mono">LinkedIn</span>
+          <strong>linkedin.com/in/Moztabir Islam</strong>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="three-bg.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
+
+

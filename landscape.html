@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landscape Work • Moztabir Islam</title>
+
+  <style>
+    :root{
+      --bg:#060606;
+      --panel:rgba(255,255,255,.05);
+      --line:rgba(255,255,255,.12);
+      --text:#f5f5f5;
+      --muted:#a8a8a8;
+      --radius:28px;
+      --ease:cubic-bezier(.22,1,.36,1);
+      --max:1300px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Inter",system-ui;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .container{
+      width:min(calc(100% - 36px), var(--max));
+      margin:0 auto;
+    }
+
+    .mono{
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+    }
+
+    header{
+      padding:20px 0;
+    }
+
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    a{color:inherit;text-decoration:none}
+
+    .btn{
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+
+    .hero{
+      padding:60px 0 30px;
+    }
+
+    h1{
+      font-size:clamp(3rem,8vw,6rem);
+      margin:0;
+      letter-spacing:-.08em;
+    }
+
+    p{
+      color:var(--muted);
+      max-width:600px;
+      line-height:1.8;
+    }
+
+    .gallery{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+      padding-bottom:60px;
+    }
+
+    .shot{
+      border-radius:24px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      background:#0e0e0e;
+      padding:10px;
+    }
+
+    .shot img{
+      width:100%;
+      height:auto;
+      object-fit:contain;
+      display:block;
+      border-radius:16px;
+      transition:.4s;
+      filter:grayscale(1);
+    }
+
+    .shot:hover img{
+      transform:scale(1.02);
+      filter:grayscale(.1);
+    }
+
+    .shot-info{
+      padding:10px 6px;
+    }
+
+    .shot-info span{
+      color:var(--muted);
+    }
+
+    .shot-info h3{
+      margin:6px 0 0;
+      font-size:1.1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="container nav">
+  <div>Moztabir Islam</div>
+  <a href="index.html#photo" class="btn">← Back</a>
+</header>
+
+<section class="hero container">
+  <div class="mono">Photography</div>
+  <h1>Landscape Frames</h1>
+  <p>Wide compositions, natural light, and environmental storytelling through landscape photography.</p>
+</section>
+
+<section class="container gallery">
+
+  <div class="shot">
+    <img src="assets/img/photos/l1.jpg">
+    <div class="shot-info">
+      <span class="mono">Landscape 01</span>
+      <h3>Calm horizon and depth</h3>
+    </div>
+  </div>
+
+  <div class="shot">
+    <img src="assets/img/photos/l2.jpg">
+    <div class="shot-info">
+      <span class="mono">Landscape 02</span>
+      <h3>Natural symmetry</h3>
+    </div>
+  </div>
+
+  <div class="shot">
+    <img src="assets/img/photos/l3.jpg">
+    <div class="shot-info">
+      <span class="mono">Landscape 03</span>
+      <h3>Light and shadow</h3>
+    </div>
+  </div>
+
+  <div class="shot">
+    <img src="assets/img/photos/l4.jpg">
+    <div class="shot-info">
+      <span class="mono">Landscape 04</span>
+      <h3>Wide framing</h3>
+    </div>
+  </div>
+
+</section>
+
+</body>
+</html>

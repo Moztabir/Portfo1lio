@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathive — Case Study</title>
+  <meta name="description" content="Mathive case study — an interactive Grade 4 math learning platform with mini games, competition, and teacher tools." />
+  <style>
+    :root{
+      --bg:#050505;
+      --bg-2:#0a0a0a;
+      --panel:rgba(255,255,255,.04);
+      --panel-2:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.09);
+      --line-2:rgba(255,255,255,.14);
+      --text:#f5f5f5;
+      --muted:#b2b2b2;
+      --soft:#7e7e7e;
+      --white:#ffffff;
+      --shadow:0 20px 60px rgba(0,0,0,.36);
+      --radius:28px;
+      --radius-sm:18px;
+      --max:1360px;
+      --nav-w:250px;
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255,255,255,.06), transparent 18%),
+        radial-gradient(circle at 86% 12%, rgba(255,255,255,.04), transparent 18%),
+        linear-gradient(180deg, #030303 0%, #0a0a0a 100%);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    ul{list-style:none}
+
+    .grid-overlay{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.065;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:30px 30px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,.18));
+      z-index:0;
+    }
+
+    .scroll-progress{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:3px;
+      background:#fff;
+      transform:scaleX(0);
+      transform-origin:left center;
+      z-index:500;
+    }
+
+    .loader{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:#020202;
+      display:grid;
+      place-items:center;
+      transition:opacity .75s var(--ease), visibility .75s var(--ease);
+    }
+    .loader.hide{opacity:0;visibility:hidden}
+    .loader-inner{width:min(90vw, 520px)}
+    .loader-kicker{
+      color:var(--muted);
+      font-size:.8rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+    .loader-title{
+      display:grid;
+      gap:0;
+      font-size:clamp(2.8rem, 10vw, 5.5rem);
+      font-weight:900;
+      line-height:.88;
+      letter-spacing:-.08em;
+      margin-bottom:22px;
+    }
+    .loader-bar-wrap{
+      height:12px;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+    .loader-bar{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg, #fff, #8f8f8f 60%, #fff);
+    }
+    .loader-meta{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      color:var(--muted);
+      font-size:.78rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:150;
+      backdrop-filter:blur(14px);
+      background:rgba(7,7,7,.72);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:16px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:.86rem;
+    }
+    .brand-mark{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 16px rgba(255,255,255,.4);
+    }
+    .top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:0 18px;
+      border-radius:999px;
+      border:1px solid var(--line-2);
+      background:rgba(255,255,255,.02);
+      color:var(--text);
+      transition:.3s var(--ease);
+      font-size:.95rem;
+    }
+    .btn:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,.24);
+      box-shadow:0 10px 26px rgba(255,255,255,.06);
+      background:rgba(255,255,255,.045);
+    }
+    .btn.primary{
+      background:#f2f2f2;
+      color:#050505;
+      border-color:transparent;
+      font-weight:700;
+    }
+    .btn.primary:hover{box-shadow:0 10px 30px rgba(255,255,255,.14)}
+    .live-btn{display:inline-flex;align-items:center;gap:8px}
+    .live-btn .arrow{transition:transform .3s var(--ease)}
+    .live-btn:hover .arrow{transform:translate(4px,-4px)}
+
+    .page{
+      position:relative;
+      z-index:1;
+      max-width:var(--max);
+      margin:0 auto;
+      padding:0 22px 120px;
+    }
+
+    .hero{
+      min-height:92vh;
+      display:grid;
+      align-items:end;
+      padding:72px 0 44px;
+    }
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:36px;
+      background:
+        radial-gradient(circle at 80% 18%, rgba(255,255,255,.09), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+      box-shadow:var(--shadow);
+      padding:38px;
+      isolation:isolate;
+    }
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      width:260px;
+      height:260px;
+      right:-60px;
+      top:-80px;
+      background:radial-gradient(circle, rgba(255,255,255,.12), transparent 65%);
+      filter:blur(18px);
+      z-index:-1;
+    }
+    .hero-top{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px}
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:.86rem;
+      backdrop-filter:blur(8px);
+    }
+    .chip .dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 12px rgba(255,255,255,.35);
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:34px;
+      align-items:end;
+    }
+    .hero-copy h1{
+      font-size:clamp(3.2rem, 8vw, 7.2rem);
+      line-height:.9;
+      letter-spacing:-.07em;
+      margin-bottom:18px;
+    }
+    .hero-copy p{
+      max-width:700px;
+      font-size:1.08rem;
+      line-height:1.8;
+      color:var(--muted);
+      margin-bottom:26px;
+    }
+    .cta{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+    .hero-stats{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:14px;
+      margin-top:26px;
+    }
+    .stat{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      background:rgba(255,255,255,.02);
+      min-height:112px;
+    }
+    .stat-label{
+      font-size:.77rem;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--soft);
+      margin-bottom:14px;
+    }
+    .stat-value{
+      font-size:1.35rem;
+      font-weight:700;
+      line-height:1.2;
+      letter-spacing:-.03em;
+    }
+
+    .hero-visual{display:flex;justify-content:flex-end;align-items:flex-end}
+    .device{
+      width:100%;
+      max-width:500px;
+      aspect-ratio:4 / 5;
+      border-radius:36px;
+      border:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+        linear-gradient(145deg, #0f0f0f, #161616);
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 24px 60px rgba(0,0,0,.45);
+      transition:transform .18s ease-out;
+    }
+    .device::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 75% 20%, rgba(255,255,255,.1), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.2));
+    }
+    .device-ui{
+      position:absolute;
+      inset:18px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:14px;
+      padding:18px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(8,8,8,.68);
+      backdrop-filter:blur(14px);
+    }
+    .device-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .device-title{font-weight:700;font-size:1rem}
+    .device-badge{
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:.78rem;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .device-map{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      background:rgba(255,255,255,.03);
+      min-height:120px;
+      position:relative;
+      overflow:hidden;
+    }
+    .device-map::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+      background-size:24px 24px;
+      opacity:.35;
+    }
+    .route-line{
+      position:absolute;
+      left:14%;
+      top:52%;
+      width:60%;
+      height:2px;
+      background:#fff;
+      transform:rotate(8deg);
+      box-shadow:0 0 10px rgba(255,255,255,.35);
+    }
+    .route-dot{
+      position:absolute;
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 12px rgba(255,255,255,.35);
+    }
+    .route-dot.start{left:12%;top:48%}
+    .route-dot.end{right:12%;top:58%}
+    .device-lines{display:grid;gap:12px;align-content:start}
+    .device-lines span{
+      display:block;
+      height:12px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,.05));
+    }
+    .device-lines span:nth-child(1){width:82%}
+    .device-lines span:nth-child(2){width:64%}
+    .device-lines span:nth-child(3){width:92%}
+    .device-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .device-cards div{
+      min-height:54px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .content-wrap{
+      display:grid;
+      grid-template-columns:var(--nav-w) minmax(0, 1fr);
+      gap:34px;
+      align-items:start;
+      margin-top:42px;
+    }
+    .side-nav{
+      position:sticky;
+      top:92px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      border-radius:24px;
+      padding:18px;
+      backdrop-filter:blur(14px);
+    }
+    .side-nav-title{
+      font-size:.76rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--soft);
+      margin-bottom:16px;
+    }
+    .side-nav ul{display:grid;gap:8px}
+    .side-nav a{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-height:42px;
+      padding:10px 12px;
+      border-radius:14px;
+      color:var(--muted);
+      border:1px solid transparent;
+      transition:.25s var(--ease);
+      font-size:.94rem;
+    }
+    .side-nav a::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:rgba(255,255,255,.18);
+      transition:.25s var(--ease);
+      flex:0 0 auto;
+    }
+    .side-nav a:hover{
+      color:var(--white);
+      background:rgba(255,255,255,.03);
+      border-color:var(--line);
+      transform:translateX(4px);
+    }
+    .side-nav a.active{
+      color:var(--white);
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.14);
+    }
+    .side-nav a.active::before{
+      background:#fff;
+      box-shadow:0 0 14px rgba(255,255,255,.35);
+    }
+
+    .main{display:grid;gap:28px}
+    .section{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:32px;
+      padding:34px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      overflow:hidden;
+    }
+    .section::after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -40px auto;
+      width:140px;
+      height:140px;
+      background:radial-gradient(circle, rgba(255,255,255,.07), transparent 65%);
+      pointer-events:none;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:16px;
+      color:var(--soft);
+      font-size:.75rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+    .eyebrow::before{content:"";width:26px;height:1px;background:rgba(255,255,255,.24)}
+    .section h2{
+      font-size:clamp(1.9rem, 3vw, 2.9rem);
+      line-height:1.05;
+      letter-spacing:-.045em;
+      margin-bottom:16px;
+    }
+    .section p{
+      font-size:1.03rem;
+      line-height:1.85;
+      color:var(--muted);
+      max-width:920px;
+    }
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-top:26px;
+    }
+    .mini-card{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+      background:rgba(255,255,255,.025);
+    }
+    .mini-card h3{font-size:1.04rem;margin-bottom:12px}
+    .mini-card p{font-size:.98rem;color:var(--muted);line-height:1.8}
+
+    .team-list,.role-list{display:grid;gap:10px;margin-top:18px}
+    .team-list li,.role-list li{
+      padding:12px 14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.025);
+      color:var(--muted);
+      line-height:1.6;
+    }
+    .role-list li{color:var(--text)}
+
+    .list{display:grid;gap:14px;margin-top:24px}
+    .list li{
+      display:grid;
+      grid-template-columns:28px 1fr;
+      gap:14px;
+      align-items:start;
+      padding:16px 0;
+      border-top:1px solid var(--line);
+    }
+    .list li:first-child{border-top:none;padding-top:0}
+    .list-num{
+      width:28px;
+      height:28px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:.82rem;
+      font-weight:700;
+      color:#050505;
+      background:#f2f2f2;
+      box-shadow:0 8px 18px rgba(255,255,255,.12);
+    }
+    .list h4{font-size:1rem;margin-bottom:6px}
+    .list p{font-size:.98rem;line-height:1.8}
+
+    .feature-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:18px;
+      margin-top:26px;
+    }
+    .feature{
+      position:relative;
+      overflow:hidden;
+      border-radius:22px;
+      border:1px solid var(--line);
+      padding:22px;
+      min-height:190px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      transition:.35s var(--ease);
+    }
+    .feature:hover{
+      transform:translateY(-6px);
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 18px 40px rgba(0,0,0,.28);
+    }
+    .feature-icon{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-size:1.05rem;
+      margin-bottom:18px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .feature h3{font-size:1.05rem;margin-bottom:10px}
+    .feature p{font-size:.98rem;line-height:1.8}
+
+    .gallery{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      margin-top:26px;
+    }
+    .gallery-stack{display:grid;gap:18px}
+    .shot{
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, #0d0d0d, #151515);
+      min-height:280px;
+      transition:.4s var(--ease);
+    }
+    .shot.large{min-height:578px}
+    .shot:hover{
+      transform:translateY(-5px);
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 20px 44px rgba(0,0,0,.32);
+    }
+    .shot-img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      padding:18px;
+      background:#0b0b0b;
+    }
+    .shot-label{
+      position:absolute;
+      left:16px;
+      right:16px;
+      bottom:16px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(8,8,8,.72);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(12px);
+    }
+    .shot-label strong{display:block;margin-bottom:5px;font-size:.98rem}
+    .shot-label span{color:var(--muted);font-size:.9rem}
+
+    .tech-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:14px;
+      margin-top:26px;
+    }
+    .tech{
+      padding:18px 16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.025);
+      text-align:center;
+      font-weight:600;
+      transition:.25s var(--ease);
+    }
+    .tech:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.18)}
+
+    .quote{
+      margin-top:24px;
+      border-left:2px solid rgba(255,255,255,.35);
+      padding:10px 0 10px 16px;
+      color:#dddddd;
+      font-size:1.04rem;
+      line-height:1.8;
+    }
+
+    .next-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:18px;
+      margin-top:26px;
+    }
+    .next-card{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+      background:rgba(255,255,255,.025);
+    }
+    .next-card h3{margin-bottom:10px;font-size:1rem}
+    .next-card p{font-size:.97rem;line-height:1.8}
+
+    .footer{
+      margin-top:28px;
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:24px;
+      text-align:center;
+      color:var(--muted);
+      background:rgba(255,255,255,.02);
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(24px);
+      transition:opacity .75s var(--ease), transform .75s var(--ease);
+    }
+    .reveal.show{opacity:1;transform:translateY(0)}
+
+    @media (max-width: 1100px){
+      .hero-grid,.content-wrap,.gallery,.two-col{grid-template-columns:1fr}
+      .hero-visual{justify-content:flex-start}
+      .side-nav{position:relative;top:auto}
+      .tech-grid{grid-template-columns:repeat(2, 1fr)}
+      .next-grid,.feature-grid{grid-template-columns:1fr 1fr}
+      .hero-stats{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 720px){
+      .page{padding:0 14px 90px}
+      .topbar-inner{padding:14px;align-items:flex-start;flex-direction:column}
+      .hero-card,.section{padding:22px;border-radius:24px}
+      .hero{min-height:auto;padding:34px 0 18px}
+      .hero-copy h1{font-size:clamp(2.5rem, 15vw, 4.2rem)}
+      .feature-grid,.next-grid,.tech-grid{grid-template-columns:1fr}
+      .btn{width:100%}
+      .top-actions{width:100%}
+      .top-actions a{flex:1}
+      .device{aspect-ratio:4 / 4.5}
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-kicker">Loading case study</div>
+      <div class="loader-title">
+        <span>MATH</span>
+        <span>IVE</span>
+      </div>
+      <div class="loader-bar-wrap">
+        <div class="loader-bar" id="loaderBar"></div>
+      </div>
+      <div class="loader-meta">
+        <span>Game-based math learning</span>
+        <span id="loaderPercent">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-overlay"></div>
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <a href="../index.html" class="btn" style="min-height:36px;padding:0 14px;font-size:.85rem;">← Back</a>
+        <span class="brand-mark"></span>
+        <span>Moztabir Islam</span>
+      </div>
+
+      <div class="top-actions">
+        <a href="#overview" class="btn">Project Overview</a>
+        <a href="#screens" class="btn primary live-btn">
+          View Screens
+          <span class="arrow">↓</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero reveal">
+      <div class="hero-card">
+        <div class="hero-top">
+          <span class="chip"><span class="dot"></span> Game-Based Learning</span>
+          <span class="chip"><span class="dot"></span> Front-End Development</span>
+          <span class="chip"><span class="dot"></span> Supabase Backend</span>
+        </div>
+
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1>Mathive</h1>
+            <p>
+              Mathive is an interactive, web-based Grade 4 math learning platform designed to make mathematics more engaging, accessible, and enjoyable. Instead of traditional worksheets, the platform turns math practice into fast-paced mini games with competition, rewards, and progress systems that keep students motivated.
+            </p>
+
+            <div class="cta">
+              <a href="#overview" class="btn primary">Start Reading</a>
+              <a href="#features" class="btn">Key Features</a>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat">
+                <div class="stat-label">Role</div>
+                <div class="stat-value">Development / Logic / Backend</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Project Type</div>
+                <div class="stat-value">Grade 4 Learning Platform</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Focus</div>
+                <div class="stat-value">Engagement + Learning + Competition</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-visual">
+            <div class="device" id="device">
+              <div class="device-ui">
+                <div class="device-top">
+                  <div class="device-title">Mathive Dashboard</div>
+                  <div class="device-badge">Prototype</div>
+                </div>
+
+                <div class="device-map">
+                  <div class="route-dot start"></div>
+                  <div class="route-line"></div>
+                  <div class="route-dot end"></div>
+                </div>
+
+                <div class="device-lines">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                <div class="device-cards">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-wrap">
+      <aside class="side-nav reveal">
+        <div class="side-nav-title">Contents</div>
+        <ul>
+          <li><a href="#overview" class="active">Overview</a></li>
+          <li><a href="#role">My Role</a></li>
+          <li><a href="#problem">Problem</a></li>
+          <li><a href="#solution">Solution</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#games">Games</a></li>
+          <li><a href="#screens">Screens</a></li>
+          <li><a href="#tech">Tech Stack</a></li>
+          <li><a href="#learnings">Learnings</a></li>
+          <li><a href="#next">Next Steps</a></li>
+        </ul>
+      </aside>
+
+      <div class="main">
+        <section class="section reveal" id="overview">
+          <div class="eyebrow">Project Overview</div>
+          <h2>A playful learning platform built to make math feel less like work</h2>
+          <p>
+            Mathive focuses on developing an interactive Grade 4 math learning platform that makes numeracy more enjoyable through colorful presentation, competition, and game-like interaction. The platform is designed to support both solo learning and competitive play while keeping navigation simple and accessible for younger students.
+          </p>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>What the project is</h3>
+              <p>
+                Mathive is a web-based platform with mini math games that reinforce addition, subtraction, multiplication, division, pattern recognition, and word problems. Students log in, choose how they want to learn, and then practice through short, interactive activities instead of static exercises.
+              </p>
+            </div>
+            <div class="mini-card">
+              <h3>Why I built it</h3>
+              <p>
+                A lot of kids find math boring, slow, and repetitive. The goal of Mathive was to turn that experience into something faster, more rewarding, and more engaging by making learning feel more like playing.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="role">
+          <div class="eyebrow">My Role</div>
+          <h2>I built the system that made the platform actually work</h2>
+          <p>
+            I handled everything except the UI design. My main work focused on the front-end logic, gameplay functionality, leaderboard systems, data handling, and backend integration. That meant taking the concept and turning it into a working learning platform with real interaction, progression, and stored results.
+          </p>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>What I worked on</h3>
+              <ul class="role-list">
+                <li>Built gameplay logic for the math mini games</li>
+                <li>Created score tracking and timer systems</li>
+                <li>Integrated leaderboard functionality</li>
+                <li>Worked with Supabase and SQL for data storage</li>
+                <li>Helped structure teacher dashboard functionality</li>
+              </ul>
+            </div>
+            <div class="mini-card">
+              <h3>My contribution</h3>
+              <p>
+                My role was about functionality and system structure. I focused on making Mathive feel like a real product instead of just a visual concept by making sure the games, competition flow, and backend systems all connected properly.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="problem">
+          <div class="eyebrow">The Problem</div>
+          <h2>Math learning can feel repetitive, unmotivating, and disconnected from how kids like to learn</h2>
+          <p>
+            For many students, traditional math practice feels too static. Worksheets and routine exercises often do not provide enough energy, challenge, or immediate reward. That makes it harder to keep students engaged, especially when the subject already feels intimidating.
+          </p>
+
+          <ul class="list">
+            <li>
+              <div class="list-num">1</div>
+              <div>
+                <h4>Low engagement</h4>
+                <p>
+                  Kids can lose interest quickly when math feels repetitive and visually flat. Without interaction, it becomes harder to keep their attention.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="list-num">2</div>
+              <div>
+                <h4>Not enough motivation</h4>
+                <p>
+                  Traditional exercises do not always give students a reason to push themselves. There is often no strong sense of progress, reward, or challenge.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="list-num">3</div>
+              <div>
+                <h4>Different learning preferences</h4>
+                <p>
+                  Some students prefer quiet practice while others perform better when they can compete. A good platform should support both styles without making the learning experience confusing.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="section reveal" id="solution">
+          <div class="eyebrow">The Solution</div>
+          <h2>A game-based platform that turns math practice into fast, rewarding interaction</h2>
+          <p>
+            Mathive solves this by mixing core Grade 4 math skills with gameplay systems like timers, leaderboards, difficulty modes, and challenge loops. Students can either play solo at their own pace or take part in competitive experiences that make learning feel more exciting.
+          </p>
+
+          <div class="quote">
+            “The goal was to make math feel less like a worksheet and more like something students actually want to play.”
+          </div>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>Design Goal</h3>
+              <p>
+                Build a playful, clear, and kid-friendly platform with smooth navigation, visual energy, and simple interactions that students can understand quickly.
+              </p>
+            </div>
+            <div class="mini-card">
+              <h3>User Goal</h3>
+              <p>
+                Help students improve math skills through short and rewarding practice sessions, while giving them a reason to stay engaged through progress, challenge, and competition.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="process">
+          <div class="eyebrow">Process</div>
+          <h2>From learning concept to a working mini-game platform</h2>
+          <p>
+            The project started with the idea of making Grade 4 numeracy more interactive, then grew into a system with multiple game modes, backend support, and teacher-focused features. The process involved identifying skill areas, designing game loops, building data systems, and making sure everything felt fast and usable.
+          </p>
+
+          <ul class="list">
+            <li>
+              <div class="list-num">1</div>
+              <div>
+                <h4>Defining the learning goals</h4>
+                <p>
+                  We identified the Grade 4 numeracy skills the platform should target, including arithmetic, graph reading, factoring, and measurement-based problem solving.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="list-num">2</div>
+              <div>
+                <h4>Designing the game structure</h4>
+                <p>
+                  Each mini game was planned around speed, clarity, and simple rules so students could jump in quickly without needing complex instructions.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="list-num">3</div>
+              <div>
+                <h4>Building logic and systems</h4>
+                <p>
+                  My work focused on connecting gameplay logic with scoring, timers, difficulty modes, and backend data so the experience felt complete and functional.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="list-num">4</div>
+              <div>
+                <h4>Competition and progression</h4>
+                <p>
+                  The leaderboard and dashboard ideas helped shape the platform into something more than just isolated games by adding progression, review, and comparison.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="list-num">5</div>
+              <div>
+                <h4>Iteration and improvement</h4>
+                <p>
+                  As the project developed, the platform became more focused on balancing fun and actual learning value. The challenge was making it playful without losing the educational purpose.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="section reveal" id="features">
+          <div class="eyebrow">Key Features</div>
+          <h2>Designed to keep students learning while keeping the platform exciting</h2>
+          <p>
+            Mathive combines educational structure with competitive and interactive features so the platform feels active instead of passive.
+          </p>
+
+          <div class="feature-grid">
+            <div class="feature">
+              <div class="feature-icon">01</div>
+              <h3>Timed Gameplay</h3>
+              <p>
+                Fast rounds make students think quickly and stay engaged. This helps create energy and challenge while keeping sessions short and focused.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="feature-icon">02</div>
+              <h3>Leaderboard</h3>
+              <p>
+                A leaderboard adds competition and gives students a reason to improve. It also helps make progress more visible and rewarding.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="feature-icon">03</div>
+              <h3>Difficulty Modes</h3>
+              <p>
+                Different difficulty options allow students to play at the level that suits them best while still giving room to improve.
+              </p>
+            </div>
+
+            <div class="feature">
+              <div class="feature-icon">04</div>
+              <h3>Teacher Dashboard</h3>
+              <p>
+                The platform includes ideas for a teacher view where performance, scores, and student progress can be reviewed more easily.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="games">
+          <div class="eyebrow">Mini Games</div>
+          <h2>A set of quick activities built around core Grade 4 numeracy skills</h2>
+          <p>
+            The core of Mathive is a set of mini games designed to reinforce skills while keeping the experience playful and competitive.
+          </p>
+
+          <div class="feature-grid">
+            <div class="feature">
+              <div class="feature-icon">01</div>
+              <h3>Dice Addition</h3>
+              <p>Players solve fast addition challenges using randomized dice values under time pressure.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">02</div>
+              <h3>Bar Graph Battle</h3>
+              <p>Students answer graph-based questions quickly to strengthen interpretation and comparison skills.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">03</div>
+              <h3>Factor Smash</h3>
+              <p>A quick-reaction factor game that turns multiplication and number relationships into something more active.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">04</div>
+              <h3>Area Attack</h3>
+              <p>Players solve area-based challenges that help connect measurement concepts with interactive play.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">05</div>
+              <h3>Perimeter Panic</h3>
+              <p>A perimeter-focused challenge designed to make problem solving feel faster and more engaging.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="screens">
+          <div class="eyebrow">Screens & Visuals</div>
+          <h2>Main platform moments, game previews, and interface views</h2>
+          <p>
+            Replace these placeholders with your final screenshots later. For now, this section is structured to match the same layout style as Chown Town.
+          </p>
+
+          <div class="gallery">
+            <div class="shot large">
+              <img src="../assets/img/projects/mathive-main.png" alt="Mathive main page placeholder" class="shot-img">
+              <div class="shot-label">
+                <strong>Main Platform View</strong>
+                <span>The homepage where students choose modes, games, and start their learning session.</span>
+              </div>
+            </div>
+
+            <div class="gallery-stack">
+              <div class="shot">
+                <img src="../assets/img/projects/mathive-game.png" alt="Mathive game placeholder" class="shot-img">
+                <div class="shot-label">
+                  <strong>Game Interface</strong>
+                  <span>A preview of one of the mini games with timer, score, and interaction loop.</span>
+                </div>
+              </div>
+
+              <div class="shot large">
+                <img src="../assets/img/projects/mathive-dashboard.png" alt="Mathive dashboard placeholder" class="shot-img">
+                <div class="shot-label">
+                  <strong>Teacher / Progress View</strong>
+                  <span>A screen for tracking results, scores, and future dashboard features.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="tech">
+          <div class="eyebrow">Tech Stack</div>
+          <h2>Tools used to build Mathive</h2>
+          <p>
+            Mathive combines browser-based interactivity, game logic, and backend storage. The platform needed both a responsive front end and a working data layer to support score tracking and progression systems.
+          </p>
+
+          <div class="tech-grid">
+            <div class="tech">HTML</div>
+            <div class="tech">CSS</div>
+            <div class="tech">JavaScript</div>
+            <div class="tech">Supabase</div>
+            <div class="tech">SQL</div>
+            <div class="tech">Game Logic</div>
+            <div class="tech">Leaderboard System</div>
+            <div class="tech">Teacher Dashboard</div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="learnings">
+          <div class="eyebrow">Lessons Learned</div>
+          <h2>What the project taught me as a developer</h2>
+          <p>
+            Mathive taught me how to balance fun interaction with actual educational value. It pushed me to think about speed, logic, user flow, and backend structure all at once. More than anything, it showed me how much difference good interaction design can make when the goal is to keep users engaged.
+          </p>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>Biggest Challenge</h3>
+              <p>
+                The hardest part was making the platform feel exciting without losing the learning purpose. The games needed to be simple enough for students to understand quickly, but still structured enough to reinforce real math skills.
+              </p>
+            </div>
+            <div class="mini-card">
+              <h3>What I’m Most Proud Of</h3>
+              <p>
+                I am most proud of building the systems that made the platform functional: the gameplay logic, leaderboard flow, backend support, and everything that helped Mathive feel like an actual working product rather than just an idea.
+              </p>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="mini-card">
+              <h3>Design Learning</h3>
+              <p>
+                I learned that educational products need a lot of clarity. Even when a platform is playful, students still need quick feedback, simple navigation, and a strong visual hierarchy.
+              </p>
+            </div>
+            <div class="mini-card">
+              <h3>Development Learning</h3>
+              <p>
+                I improved at building interaction systems that connect front-end experiences with stored data. It helped me think more deeply about how gameplay, scoring, difficulty, and dashboards work together.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="next">
+          <div class="eyebrow">Next Steps</div>
+          <h2>How Mathive could grow in the future</h2>
+          <p>
+            Mathive already creates a strong base for playful math learning, but there is room to make it even more engaging and more powerful as a full platform.
+          </p>
+
+          <div class="next-grid">
+            <div class="next-card">
+              <h3>Multiplayer</h3>
+              <p>
+                A multiplayer mode could let students compete in real time and make classroom challenges even more exciting.
+              </p>
+            </div>
+            <div class="next-card">
+              <h3>AI Tutor</h3>
+              <p>
+                An AI tutor could give hints, explain mistakes, and personalize support based on how each student performs.
+              </p>
+            </div>
+            <div class="next-card">
+              <h3>Better Analytics</h3>
+              <p>
+                Expanded dashboard analytics could give teachers deeper insight into student strengths, weaknesses, and overall progress.
+              </p>
+            </div>
+          </div>
+
+          <div class="cta">
+            <a href="#overview" class="btn">Back to Start</a>
+            <a href="#screens" class="btn primary">View Screens</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const loader = document.getElementById('loader');
+    const loaderBar = document.getElementById('loaderBar');
+    const loaderPercent = document.getElementById('loaderPercent');
+    const progressBar = document.getElementById('scrollProgress');
+
+    function fakeLoader() {
+      let progress = 0;
+      const timer = setInterval(() => {
+        progress += Math.random() * 13;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(timer);
+          setTimeout(() => loader.classList.add('hide'), 350);
+        }
+        loaderBar.style.width = progress + '%';
+        loaderPercent.textContent = Math.floor(progress) + '%';
+      }, 90);
+    }
+
+    window.addEventListener('load', () => {
+      fakeLoader();
+    });
+
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.side-nav a');
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            if(link.getAttribute('href') === '#' + id){
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, {
+      rootMargin: '-30% 0px -55% 0px',
+      threshold: 0.1
+    });
+    sections.forEach(section => sectionObserver.observe(section));
+
+    const device = document.getElementById('device');
+    window.addEventListener('mousemove', (e) => {
+      if(!device || window.innerWidth <= 1100) return;
+      const x = (window.innerWidth / 2 - e.clientX) / 55;
+      const y = (window.innerHeight / 2 - e.clientY) / 55;
+      device.style.transform = `translate(${x * 0.45}px, ${y * 0.45}px)`;
+    });
+
+    function updateProgress() {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const value = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+      progressBar.style.transform = `scaleX(${value})`;
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+  </script>
+</body>
+</html>
