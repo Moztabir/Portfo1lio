@@ -399,6 +399,67 @@ main{padding-top:110px}
   line-height:1.85;
 }
 
+.photo-link,
+.photo-link:visited,
+.photo-link:hover,
+.photo-link:active{
+  color:var(--text);
+  text-decoration:none;
+}
+
+.photo-link{
+  display:block;
+}
+
+.photo-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+
+.photo-card{
+  position:relative;
+  border-radius:30px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0e0e0e;
+  aspect-ratio: 3 / 4;
+  width:100%;
+}
+
+.photo-card.tall{
+  min-height:750px;
+}
+
+.photo-img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  background:#0e0e0e;
+  transition:transform .5s var(--ease), filter .5s var(--ease);
+  filter:grayscale(1) contrast(1.05);
+}
+
+.photo-card:hover .photo-img{
+  transform:scale(1.02);
+  filter:grayscale(.15) contrast(1.05);
+}
+
+.photo-caption{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  padding:16px 18px;
+  border-radius:24px;
+  background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.6));
+  border:1px solid rgba(255,255,255,.12);
+}
+
 .hero-marquee{
   margin-top:30px;
   border-top:1px solid var(--line);
@@ -464,22 +525,23 @@ main{padding-top:110px}
 
 .projects-stack{
   display:grid;
-  gap:22px;
+  gap:80px;
 }
 
 .project-card{
   position:sticky;
   top:108px;
-  min-height:78svh;
+  min-height:90svh;
   display:grid;
   grid-template-columns:1fr 1.1fr;
   gap:20px;
   padding:24px;
   border-radius:34px;
   border:1px solid var(--line);
-  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-  backdrop-filter:blur(12px);
-  box-shadow:0 16px 44px rgba(0,0,0,.2);
+  background:rgba(10,10,10,.82); /* darker and more solid */
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 16px 44px rgba(0,0,0,.28);
   transition:transform .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
 }
 
@@ -553,8 +615,31 @@ main{padding-top:110px}
   position:relative;
   border-radius:30px;
   overflow:hidden;
-  min-height:280px;
+  min-height:600px; /* same height for both cards */
   border:1px solid rgba(255,255,255,.08);
+  background:#0e0e0e;
+}
+
+.photo-card.tall{
+  min-height:600px; /* match portrait height */
+}
+
+.photo-img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;   /* shows full image */
+  object-position:center;
+  display:block;
+  background:#0e0e0e;
+  transition:transform .5s var(--ease), filter .5s var(--ease);
+  filter:grayscale(1) contrast(1.05);
+}
+
+.photo-card:hover .photo-img{
+  transform:scale(1.02);
+  filter:grayscale(.15) contrast(1.05);
 }
 
 .visual-one{
