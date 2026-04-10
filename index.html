@@ -1,7 +1,3 @@
-
-
-
-<!-- ========================= index.html ========================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +10,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+
+<svg style="position:absolute;width:0;height:0;">
+  <filter id="liquid">
+    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="turb"/>
+    <feDisplacementMap in="SourceGraphic" in2="turb" scale="0" id="displacement"/>
+  </filter>
+</svg>
+
+
   <div id="loader" aria-hidden="true">
     <div class="loader-inner">
       <div class="loader-kicker mono">Initializing portfolio</div>
@@ -68,12 +74,14 @@
             <span class="hero-chip magnetic">Interactive UI</span>
           </div>
 
-          <h1 class="hero-title">
-            <span class="title-line title-outline" data-depth="0.06">BUILDING</span>
-            <span class="title-line" data-depth="0.12">DIGITAL</span>
-            <span class="title-line title-accent" data-depth="0.18">EXPERIENCES</span>
-            <span class="title-line title-outline" data-depth="0.08">THAT MOVE</span>
-          </h1>
+          <div class="hero-title liquid-text-title" id="liquidTitle">
+            <div class="liquid-line title-outline" data-depth="0.06" data-text="BUILDING"></div>
+            <div class="liquid-line" data-depth="0.12" data-text="DIGITAL"></div>
+            <div class="liquid-line title-accent" data-depth="0.18" data-text="EXPERIENCES"></div>
+            <div class="liquid-line title-outline" data-depth="0.08" data-text="THAT MOVE"></div>
+          </div>
+
+          <svg class="liquid-filters" id="liquidFilters" aria-hidden="true"></svg>
 
           <p class="hero-text reveal-delay">
             I create interactive websites, polished front-end experiences, and visual work that blends code, motion, and photography into something memorable.
@@ -106,29 +114,40 @@
           </div>
         </div>
       </div>
-
+      
       <div class="hero-marquee mono">
-        <div class="marquee-track">
+        <div class="marquee-track" id="marqueeTrack">
           <span>Creative Frontend</span>
           <span>Scroll Animation</span>
           <span>Photography</span>
           <span>Interactive UI</span>
-          <span>Creative Frontend</span>
-          <span>Scroll Animation</span>
-          <span>Photography</span>
-          <span>Interactive UI</span>
+          <span>GitHub</span>
+          <span>Python</span>
+          <span>JavaScript</span>
+          <span>HTML</span>
+          <span>CSS</span>
+          <span>Supabase</span>
+          <span>Minimal</span>
+          <span>Modern</span>
         </div>
       </div>
+
+
     </section>
 
     <section class="section" id="about">
       <div class="container section-head reveal">
         <div>
           <div class="eyebrow mono">About</div>
-          <h2>Developer mindset with a visual eye.</h2>
+          <h1 class="hero-title fracture-title">
+            <span class="title-line title-outline" data-depth="0.06" data-text="BUILDING">BUILDING</span>
+            <span class="title-line" data-depth="0.12" data-text="DIGITAL">DIGITAL</span>
+            <span class="title-line title-accent" data-depth="0.18" data-text="EXPERIENCES">EXPERIENCES</span>
+            <span class="title-line title-outline" data-depth="0.08" data-text="THAT MOVE">THAT MOVE</span>
+          </h1>
         </div>
         <p>
-          I like building websites that feel premium and alive. My work sits between clean front-end development, motion design, and photography-driven presentation.
+          I enjoy creating websites that feel modern, smooth, and visually strong. My work blends front-end development, motion, and design so each project feels more than just functional — it feels alive.
         </p>
       </div>
 
@@ -136,14 +155,14 @@
         <article class="card reveal magnetic">
           <h3>What I do</h3>
           <p>
-            I build portfolio sites, landing pages, UI concepts, and interactive projects with strong typography, smooth motion, and clear visual systems.
+            I build portfolio sites, landing pages, UI concepts, and interactive projects that focus on both design and experience. I like working with strong typography, clean layouts, and smooth animations to create websites that look polished and are enjoyable to use.
           </p>
         </article>
 
         <article class="card reveal magnetic">
           <h3>What I bring</h3>
           <p>
-            A mix of technical development and visual direction. I care about how a site feels, not just how it functions.
+            I bring both a technical and creative mindset to my work. I care about the small details, how things move, how a layout flows, and how a website feels overall. For me, good design is not just about making something work, but making it feel memorable.
           </p>
         </article>
       </div>
@@ -153,7 +172,10 @@
       <div class="container section-head reveal">
         <div>
           <div class="eyebrow mono">Selected Work</div>
-          <h2>Featured projects.</h2>
+          <h1 class="hero-title fracture-title">
+          <span class="title-line" data-depth="0.12" data-text="Featured">Featured</span>
+          <span class="title-line" data-depth="0.12" data-text="projects.">projects.</span>
+          </h1>
         </div>
       </div>
 
@@ -177,7 +199,7 @@
             </div>
             </article>
 
-          <br>
+
 
         <article class="project-card project-card-full reveal tilt-card">
             <div class="project-meta">
@@ -276,9 +298,6 @@
           <div class="eyebrow mono">Contact</div>
           <h2>Let’s build something memorable.</h2>
         </div>
-        <p>
-          Replace these links with your real email, GitHub, LinkedIn, and resume.
-        </p>
       </div>
 
       <div class="container contact-grid">
@@ -315,8 +334,8 @@
     </section>
   </main>
 
-  <script type="module" src="three-bg.js"></script>
-  <script src="main.js"></script>
+<script type="module" src="three-bg.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
 
