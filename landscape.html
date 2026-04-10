@@ -25,6 +25,40 @@
       color:var(--text);
     }
 
+
+        .nav-wrap{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(10,10,10,.65);
+      box-shadow:0 14px 40px rgba(0,0,0,.25);
+    }
+
+    .brand,
+    .btn{
+      color:var(--text);
+      text-decoration:none;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+    }
+
+    .brand-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 20px rgba(255,255,255,.7);
+    }
+
     .container{
       width:min(calc(100% - 36px), var(--max));
       margin:0 auto;
@@ -118,10 +152,18 @@
 
 <body>
 
-<header class="container nav">
-  <div>Moztabir Islam</div>
-  <a href="index.html#photo" class="btn">← Back</a>
-</header>
+  <header class="site-header">
+    <div class="container">
+      <div class="nav-wrap">
+        <a href="index.html" class="brand">
+          <span class="brand-dot"></span>
+          <span>Moztabir Islam</span>
+        </a>
+
+        <a href="index.html#photo" class="btn">← Back to Portfolio</a>
+      </div>
+    </div>
+  </header>
 
 <section class="hero container">
   <div class="mono">Photography</div>
