@@ -1,32 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Landscape Work • Moztabir Islam</title>
-
   <style>
     :root{
       --bg:#060606;
+      --bg-soft:#0c0c0c;
       --panel:rgba(255,255,255,.05);
       --line:rgba(255,255,255,.12);
+      --line-strong:rgba(255,255,255,.22);
       --text:#f5f5f5;
       --muted:#a8a8a8;
+      --white:#ffffff;
       --radius:28px;
       --ease:cubic-bezier(.22,1,.36,1);
       --max:1300px;
     }
 
     *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
     body{
       margin:0;
-      font-family:"Inter",system-ui;
+      font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg);
       color:var(--text);
+      overflow-x:hidden;
     }
 
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 22%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,.06), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(255,255,255,.04), transparent 25%);
+      pointer-events:none;
+      z-index:-2;
+    }
 
-        .nav-wrap{
+    .noise{
+      position:fixed;
+      inset:0;
+      background-image:radial-gradient(rgba(255,255,255,.08) .7px, transparent .7px);
+      background-size:20px 20px;
+      opacity:.10;
+      pointer-events:none;
+      z-index:-1;
+      mask-image:radial-gradient(circle at center, black 48%, transparent 96%);
+    }
+
+    .container{
+      width:min(calc(100% - 36px), var(--max));
+      margin:0 auto;
+    }
+
+    .mono{
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+    }
+
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      padding:14px 0;
+      backdrop-filter:blur(14px);
+      background:rgba(6,6,6,.65);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+
+    .nav-wrap{
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -59,98 +106,205 @@
       box-shadow:0 0 20px rgba(255,255,255,.7);
     }
 
-    .container{
-      width:min(calc(100% - 36px), var(--max));
-      margin:0 auto;
-    }
-
-    .mono{
-      font-size:.8rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-    }
-
-    header{
-      padding:20px 0;
-    }
-
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-
-    a{color:inherit;text-decoration:none}
-
     .btn{
-      padding:10px 16px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px 18px;
       border-radius:999px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.04);
+      transition:transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.08);
+      border-color:var(--line-strong);
     }
 
     .hero{
-      padding:60px 0 30px;
+      padding:72px 0 32px;
     }
 
-    h1{
-      font-size:clamp(3rem,8vw,6rem);
-      margin:0;
-      letter-spacing:-.08em;
+    .hero-card{
+      border:1px solid var(--line);
+      border-radius:36px;
+      padding:36px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:0 16px 44px rgba(0,0,0,.20);
     }
 
-    p{
+    .eyebrow{
       color:var(--muted);
-      max-width:600px;
+      margin-bottom:14px;
+    }
+
+    .hero h1{
+      margin:0 0 18px;
+      font-size:clamp(3rem, 9vw, 7rem);
+      line-height:.88;
+      letter-spacing:-.08em;
+      text-transform:uppercase;
+    }
+
+    .hero p{
+      max-width:760px;
+      color:var(--muted);
+      line-height:1.85;
+      margin:0;
+    }
+
+    .hero-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:22px;
+    }
+
+    .hero-tags span{
+      padding:10px 13px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+    }
+
+    .section{
+      padding:26px 0 86px;
+    }
+
+    .section-head{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:20px;
+      align-items:end;
+      margin-bottom:24px;
+    }
+
+    .section-head h2{
+      margin:0;
+      font-size:clamp(2rem, 5vw, 4rem);
+      line-height:.92;
+      letter-spacing:-.06em;
+      text-transform:uppercase;
+    }
+
+    .section-head p{
+      color:var(--muted);
+      max-width:520px;
       line-height:1.8;
+      margin:0;
     }
 
     .gallery{
       display:grid;
-      grid-template-columns:1fr;
+      grid-template-columns:repeat(3, 1fr);
       gap:18px;
-      padding-bottom:60px;
     }
 
     .shot{
-      border-radius:24px;
+      position:relative;
       overflow:hidden;
+      border-radius:28px;
       border:1px solid rgba(255,255,255,.08);
       background:#0e0e0e;
-      padding:10px;
+      min-height:340px;
+      box-shadow:0 12px 36px rgba(0,0,0,.18);
+      transition:transform .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease);
+    }
+
+    .shot:hover{
+      transform:translateY(-4px);
+      border-color:var(--line-strong);
+      box-shadow:0 18px 48px rgba(0,0,0,.28);
+    }
+
+    .shot.tall{
+      min-height:520px;
     }
 
     .shot img{
       width:100%;
-      height:auto;
-      object-fit:contain;
+      height:100%;
       display:block;
-      border-radius:16px;
-      transition:.4s;
-      filter:grayscale(1);
+      object-fit:contain;
+      background:#0e0e0e;
+      transition:transform .45s var(--ease), filter .45s var(--ease);
+      filter:grayscale(1) contrast(1.03);
     }
 
     .shot:hover img{
       transform:scale(1.02);
-      filter:grayscale(.1);
+      filter:grayscale(.08) contrast(1.03);
     }
 
     .shot-info{
-      padding:10px 6px;
+      position:absolute;
+      left:18px;
+      right:18px;
+      bottom:18px;
+      padding:14px 16px;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.65));
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(10px);
     }
 
     .shot-info span{
       color:var(--muted);
+      display:block;
+      margin-bottom:6px;
     }
 
     .shot-info h3{
-      margin:6px 0 0;
-      font-size:1.1rem;
+      margin:0;
+      font-size:1.15rem;
+      letter-spacing:-.03em;
+    }
+
+    .closing{
+      margin-top:28px;
+      padding:22px;
+      border-radius:28px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--muted);
+      line-height:1.85;
+    }
+
+    @media (max-width: 1100px){
+      .gallery{
+        grid-template-columns:repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px){
+      .hero{
+        padding:46px 0 22px;
+      }
+
+      .hero-card{
+        padding:24px;
+        border-radius:28px;
+      }
+
+      .section-head{
+        grid-template-columns:1fr;
+      }
+
+      .gallery{
+        grid-template-columns:1fr;
+      }
+
+      .shot,
+      .shot.tall{
+        min-height:360px;
+      }
     }
   </style>
 </head>
-
 <body>
+  <div class="noise"></div>
 
   <header class="site-header">
     <div class="container">
@@ -165,43 +319,107 @@
     </div>
   </header>
 
-<section class="hero container">
-  <div class="mono">Photography</div>
-  <h1>Landscape Frames</h1>
-  <p>Wide compositions, natural light, and environmental storytelling through landscape photography.</p>
-</section>
+  <main>
+    <section class="hero container">
+      <div class="mono">Photography</div>
+      <h1>LANDSCAPE FRAMES</h1>
+      <p>Wide compositions, natural light, and environmental storytelling through Nature</p>
+    </section>
 
-<section class="container gallery">
+    <section class="section">
+      <div class="container section-head">
+        <div>
+          <div class="eyebrow mono">Best Shots</div>
+          <h2>Nature, Water, Sky</h2>
+        </div>
+      </div>
 
-  <div class="shot">
-    <img src="assets/img/photos/l1.jpg">
-    <div class="shot-info">
-      <span class="mono">Landscape 01</span>
-    </div>
-  </div>
+      <div class="container gallery">
+        <article class="shot tall">
+          <img src="assets/img/photos/Landscape/l1.jpg" alt="Landscape photo 1">
+          <div class="shot-info">
+            <span class="mono">landscape 01</span>
+          </div>
+        </article>
 
-  <div class="shot">
-    <img src="assets/img/photos/l2.jpg">
-    <div class="shot-info">
-      <span class="mono">Landscape 02</span>
-    </div>
-  </div>
+        <article class="shot tall">
+          <img src="assets/img/photos/Landscape/l5.jpg" alt="Landscape photo 2">
+          <div class="shot-info">
+            <span class="mono">Landscape 02</span>
+          </div>
+        </article>
 
-  <div class="shot">
-    <img src="assets/img/photos/l3.jpg">
-    <div class="shot-info">
-      <span class="mono">Landscape 03</span>
-    </div>
-  </div>
+        <article class="shot tall">
+          <img src="assets/img/photos/Landscape/l7.jpg" alt="Landscape photo 3">
+          <div class="shot-info">
+            <span class="mono">Landscape 03</span>
+          </div>
+        </article>
 
-  <div class="shot">
-    <img src="assets/img/photos/l4.jpg">
-    <div class="shot-info">
-      <span class="mono">Landscape 04</span>
-    </div>
-  </div>
+        <article class="shot">
+          <img src="assets/img/photos/Landscape/l2.jpg" alt="Landscape photo 4">
+          <div class="shot-info">
+            <span class="mono">Landscape 04</span>
+          </div>
+        </article>
 
-</section>
+        <article class="shot">
+          <img src="assets/img/photos/Landscape/l3.jpg" alt="Landscape photo 5">
+          <div class="shot-info">
+            <span class="mono">Landscape 05</span>
+          </div>
+        </article>
 
+        <article class="shot">
+          <img src="assets/img/photos/Landscape/l4.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 06</span>
+          </div>
+        </article>
+
+        <article class="shot tall">
+          <img src="assets/img/photos/Landscape/l8.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 07</span>
+          </div>
+        </article>
+
+        <article class="shot tall">
+          <img src="assets/img/photos/Landscape/l9.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 08</span>
+          </div>
+        </article>
+
+        <article class="shot tall">
+          <img src="assets/img/photos/Landscape/l11.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 09</span>
+          </div>
+        </article>
+
+        <article class="shot">
+          <img src="assets/img/photos/Landscape/l6.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 10</span>
+          </div>
+        </article>
+
+        <article class="shot">
+          <img src="assets/img/photos/Landscape/l10.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 11</span>
+          </div>
+        </article>
+
+        <article class="shot">
+          <img src="assets/img/photos/Landscape/l12.jpg" alt="Landscape photo 6">
+          <div class="shot-info">
+            <span class="mono">Landscape 12</span>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
